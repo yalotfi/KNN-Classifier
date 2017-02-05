@@ -6,6 +6,8 @@ Implement a K-Nearest Neighbor classifier from scratch on the famous iris-flower
 
 * `train_test_split` from `sklearn.cross_validation`
 
+* `accuracy_score` from `sklearn.metrics`
+
 * `distance` method from `scipy.spatial`
 
 * `datasets` from `sklearn`
