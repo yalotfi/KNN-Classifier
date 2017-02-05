@@ -12,8 +12,12 @@ KNN Classifier's best attribute is its relative simplicity. It is not difficult 
 
 * `accuracy_score` from `sklearn.metrics`
 
-* `distance` method from `scipy.spatial`
+* `numpy` to calculate distance between to points
 
 * `datasets` from `sklearn`
 
 * `datasets.load_iris()`
+
+# Results:
+
+Testing a range of k values, the model consistently scores above 92% but varies around an average of 94%.  The best score was 97% with 'k = 7', meaning a new data point is compared against its 7 nearest neighbors. This could be tweaked further, but I am happy with these results. Any further improvement would be some visualization of the model, but that can be tricky with high dimensional data.  
