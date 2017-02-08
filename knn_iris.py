@@ -49,17 +49,20 @@ def process_data():
     return X_train, X_test, y_train, y_test
 
 
-def knn(k_nieghbor):
+def knn(k_neighbor):
     # Step 1: Load data
     X_train, X_test, y_train, y_test = process_data()
 
     # Step 2: Build KNN Model
     classifier = scrappy_knn()
-    classifier.fit(X_train, y_train, k_nieghbor)
-    predictions = classifier.predict(X_test, k_nieghbor)
+    classifier.fit(X_train, y_train, k_neighbor)
+    predictions = classifier.predict(X_test, k_neighbor)
 
     # Step 3: Assess Model
-    print(accuracy_score(y_test, predictions))
+    print('For K = {0}: {1}%'.format(
+        k_neighbor, round(accuracy_score(y_test, predictions) * 100, 2)
+        )
+    )
 
 
 if __name__ == '__main__':
