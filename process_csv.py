@@ -1,5 +1,8 @@
 import pandas as pd
-import numpy as np
+
+
+def normalize_df(df):
+    return (df - df.mean()) / (df.max() - df.min())
 
 
 def process_csv(path, colnames):
@@ -10,14 +13,18 @@ def process_csv(path, colnames):
 
     # Subset strings and numerics
     numerics = df.select_dtypes(exclude=['object'])
-    factors = df.select_dtypes(include=['object'])
+    factors = df.select_dtypes(include=['object']).drop(['y'], axis=1)
+    labels = df.loc[:, 'y']
 
-    # Factorize the strings
+    # Factorize the dataframe and series (matrix and vector)
     factors = factors.apply(lambda x: pd.factorize(x)[0])
+    labels = labels.factorize()[0]
 
     # Concatenate factorized and numeric data subsets
-    clean_df = pd.concat([factors, numerics], axis=1)
-    return df, clean_df
+    features = pd.concat([factors, numerics], axis=1)
+
+    # Return normalized feature matrix and binary label classes
+    return normalize_df(features), pd.Series(labels)
 
 
 def main():
@@ -33,13 +40,11 @@ def main():
         'euribor3m', 'nr_employed', 'y']
 
     # Process data with function from above
-    raw_df, clean_df = process_csv(path=file_path, colnames=names)
+    features, labels = process_csv(path=file_path, colnames=names)
 
-    # Check that there are no missing values
-    print(clean_df.apply(lambda x: np.sum(pd.isnull(x))))
-
-    # Write a csv file ready for analysis
-    clean_df.to_csv('data/bank-sample-factorized.csv')
+    # Write csv files ready for analysis
+    features.to_csv('data/bank-sample-factorized.csv')
+    labels.to_csv('data/bank-sample-factorized-labels.csv')
 
 
 if __name__ == '__main__':
