@@ -9,7 +9,7 @@ class scrappy_knn():
         self.k = k
 
     def euc(self, a, b):
-        # Norm vectorization is more efficient
+        # Norm difference is more efficient
         return np.linalg.norm(a - b)
 
     def closest(self, row, k):

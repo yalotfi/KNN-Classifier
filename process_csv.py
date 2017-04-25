@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from sklearn.cross_validation import train_test_split
 
 
 def normalize_df(df):
@@ -21,10 +23,12 @@ def process_csv(path, colnames):
     labels = labels.factorize()[0]
 
     # Concatenate factorized and numeric data subsets
-    features = pd.concat([factors, numerics], axis=1)
+    features = np.array(normalize_df(pd.concat([factors, numerics], axis=1)))
+    [X_train, X_test,
+     y_train, y_test] = train_test_split(features, labels, test_size=0.3)
 
-    # Return normalized feature matrix and binary label classes
-    return normalize_df(features), pd.Series(labels)
+    # Train and test sets for X and y
+    return X_train, X_test, y_train, y_test
 
 
 def main():
@@ -40,11 +44,18 @@ def main():
         'euribor3m', 'nr_employed', 'y']
 
     # Process data with function from above
-    features, labels = process_csv(path=file_path, colnames=names)
+    [X_train, X_test,
+     y_train, y_test] = process_csv(path=file_path, colnames=names)
+    print(X_train.shape)
+    print(X_test.shape)
+    print(y_train.shape)
+    print(y_test.shape)
 
     # Write csv files ready for analysis
-    features.to_csv('data/bank-sample-factorized.csv')
-    labels.to_csv('data/bank-sample-factorized-labels.csv')
+    np.savetxt('data/x_train.csv', X_train, delimiter=',')
+    np.savetxt('data/X_test.csv', X_test, delimiter=',')
+    np.savetxt('data/y_train.csv', y_train, delimiter=',')
+    np.savetxt('data/y_test.csv', y_test, delimiter=',')
 
 
 if __name__ == '__main__':
