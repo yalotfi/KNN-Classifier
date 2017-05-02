@@ -1,9 +1,11 @@
 import numpy as np
-import knn_iris as knn
+import knn_classifier as knn
 import process_csv as pr
+from sklearn.metrics import accuracy_score
+from sklearn.cross_validation import train_test_split
 
 
-def main():
+def main(k):
     # Data Dependecies
     file_path = 'data/bank-sampled-cleaned.csv'
     names = [  # Save feature names
@@ -17,13 +19,21 @@ def main():
 
     # Import Data
     features, labels = pr.process_csv(path=file_path, colnames=names)
-    print(np.array(features).shape, type(labels))
-    print(np.array(features)[0, 0:3])
+    [X_train, X_test,
+     y_train, y_test] = train_test_split(
+        np.array(features), labels, test_size=0.3, random_state=99)
 
     # Build classifier
     classifier = knn.scrappy_knn()
-    print(type(classifier))
+    classifier.fit(X_train, y_train, k)
+    predictions = classifier.predict(X_test, k)
+
+    # Step 3: Assess Model
+    print('For K = {0}: {1}%'.format(
+        k, round(accuracy_score(y_test, predictions) * 100, 2))
+    )
 
 
 if __name__ == '__main__':
-    main()
+    for k in range(3, 11, 2):
+        main(k)

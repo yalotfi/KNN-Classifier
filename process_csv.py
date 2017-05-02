@@ -12,6 +12,8 @@ def process_csv(path, colnames):
     df = pd.read_csv(
         path, encoding='utf-8', header=None, skiprows=1, names=colnames
     )
+    df = df.drop_duplicates(keep='first')
+    df = df.sample(frac=0.10, replace=False, random_state=99)
 
     # Subset strings and numerics
     numerics = df.select_dtypes(exclude=['object'])
@@ -25,14 +27,8 @@ def process_csv(path, colnames):
     # Concatenate factorized and numeric data subsets
     features = normalize_df(pd.concat([factors, numerics], axis=1))
 
-    # Split Data
-    [X_train, X_test,
-     y_train, y_test] = train_test_split(
-        np.array(features), labels, test_size=0.3)
-    headers = features.columns.values
-
     # Train and test sets for X and y
-    return X_train, X_test, y_train, y_test, headers
+    return features, labels
 
 
 def main():
@@ -48,9 +44,13 @@ def main():
         'euribor3m', 'nr_employed', 'y']
 
     # Process data with function from above
+    features, labels = process_csv(path=file_path, colnames=names)
+
+    # Split Data
     [X_train, X_test,
-     y_train, y_test,
-     headers] = process_csv(path=file_path, colnames=names)
+     y_train, y_test] = train_test_split(
+        np.array(features), labels, test_size=0.3, random_state=99)
+    headers = features.columns.values
 
     # # Append labels to train and test for export
     m_train = len(y_train)
